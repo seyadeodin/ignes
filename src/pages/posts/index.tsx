@@ -1,10 +1,23 @@
 import { GetStaticProps } from 'next';
+import Link from 'next/link'
 import Head from 'next/head';
 import { client } from '../../services/prismic';
+import { RichText } from 'prismic-dom'
 import styles from './styles.module.scss'
 
-export default function Posts() {
-  return (
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+}
+
+interface PostsProps {
+  posts: Post[]
+}
+
+export default function Posts({ posts }: PostsProps) {
+  return ( 
     <>
       <Head>
         <title>Posts | Ignews</title>
@@ -13,23 +26,17 @@ export default function Posts() {
       <main className={styles.container}>
         <div className={styles.posts}>
 
-          <a href="#">
-            <time>12 de março de 2022</time> 
-            <strong>Creating a Monorepo with Lerna & Yarn Workspaces</strong>
-            <p>In this guid, you will learn how to create a Monorepo to manage and bla bla bla</p>
-          </a>
-
-          <a href="#">
-            <time>12 de março de 2022</time> 
-            <strong>Creating a Monorepo with Lerna & Yarn Workspaces</strong>
-            <p>In this guid, you will learn how to create a Monorepo to manage and bla bla bla</p>
-          </a>
-
-          <a href="#">
-            <time>12 de março de 2022</time> 
-            <strong>Creating a Monorepo with Lerna & Yarn Workspaces</strong>
-            <p>In this guid, you will learn how to create a Monorepo to manage and bla bla bla</p>
-          </a>
+          { posts.map(post => (
+            <Link href="/" key={post.slug}>
+              <a>
+                <time>{post.updatedAt}</time> 
+                <strong>{post.title}</strong>
+                <p>{post.excerpt}</p>
+              </a>
+            </Link>
+          ))
+          }
+          
         </div>
 
       </main>
@@ -51,12 +58,30 @@ export const getStaticProps: GetStaticProps = async () => {
   })
 
   console.log(JSON.stringify(response, null, 2))
+  //console.log(response)
   //to get details of objects on cascade 
   // the two determines the depth
 
+
+  //FORMAT YOUR DATA RIGHT AFTER CONSUME IT FROM THE EXTERNAL API
+  const posts = response.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt: post.data.content.find(content => content.type === "paragraph")?.text ?? '',
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+  })
+
+  console.log(posts)
+
   return {
     props: {
-
+      posts
     }
   }
 }

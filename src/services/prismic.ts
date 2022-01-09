@@ -8,7 +8,7 @@ const routes = [
   },
 ]
 
-const repoName = process.env.PRSMIC_REPO_NAME
+const repoName = process.env.PRISMIC_REPO_NAME
 const endpoint = prismic.getEndpoint(repoName)
 const accessToken = process.env.PRISMIC_ACCESS_TOKEN
 export const client = prismic.createClient(endpoint, { routes, fetch, accessToken })
