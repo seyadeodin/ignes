@@ -1,4 +1,6 @@
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { client } from '../../services/prismic';
 import styles from './styles.module.scss'
 
 export default function Posts() {
@@ -33,4 +35,28 @@ export default function Posts() {
       </main>
     </>
   );
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = client;
+
+  const response = await prismic.getAllByType('article', {
+    orderings: {
+      field: 'document.first_publication_date',
+      direction: 'desc',
+    },
+    fetch: ['publication.title', 'publication.content'],
+    pageSize: 100,
+    lang: 'en-us',
+  })
+
+  console.log(JSON.stringify(response, null, 2))
+  //to get details of objects on cascade 
+  // the two determines the depth
+
+  return {
+    props: {
+
+    }
+  }
 }
