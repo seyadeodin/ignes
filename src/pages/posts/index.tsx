@@ -27,7 +27,7 @@ export default function Posts({ posts }: PostsProps) {
         <div className={styles.posts}>
 
           { posts.map(post => (
-            <Link href="/" key={post.slug}>
+            <Link href={`/posts/${post.slug}`} key={post.slug}>
               <a>
                 <time>{post.updatedAt}</time> 
                 <strong>{post.title}</strong>
@@ -36,7 +36,7 @@ export default function Posts({ posts }: PostsProps) {
             </Link>
           ))
           }
-          
+
         </div>
 
       </main>
@@ -52,12 +52,12 @@ export const getStaticProps: GetStaticProps = async () => {
       field: 'document.first_publication_date',
       direction: 'desc',
     },
-    fetch: ['publication.title', 'publication.content'],
+    fetch: ['article.title', 'article.content'],
     pageSize: 100,
     lang: 'en-us',
   })
 
-  console.log(JSON.stringify(response, null, 2))
+  //console.log(JSON.stringify(response, null, 2))
   //console.log(response)
   //to get details of objects on cascade 
   // the two determines the depth
