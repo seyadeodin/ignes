@@ -52,7 +52,6 @@ export default NextAuth({
           activeSubscription: null
         }
       }
-
     },
     async signIn(user, account, profile) {
       const { email } = user;
