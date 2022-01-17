@@ -1,4 +1,4 @@
-import { GetStaticProps } from "next"
+import { GetStaticPaths, GetStaticProps } from "next"
 import { useSession } from "next-auth/client"
 import Head from "next/head"
 import Link from 'next/link'
@@ -53,12 +53,20 @@ export default function PostPreview({ post }:PostPreviewProps){
 }
 
 
-export const getStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async() => {
   return({
-    paths: [],
+    paths: [
+      //points which posts witll be generated during build
+      // { params: {slug: 'slug_name'}}
+    ],
     fallback: 'blocking'
   })
 }
+//next behavior:
+//Generate static pages during build - for fewer pages
+//Generate static pages on first access - for greater quanity of registers
+// Half - static build for most used and first access of the others
+
 
 //every page that can be public can be static
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -82,6 +90,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post
-    }
+    },
+    redirect: 60 * 30, // 30 minutes
   }
 }
